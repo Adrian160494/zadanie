@@ -1,10 +1,11 @@
 "use strict";
 
-var searchNumber = function searchNumber(items) {
+var getItemsMaxNumber = function getItemsMaxNumber(items) {
     console.log(items);
-    var regExp = /(\-|)[0-9]{1,}/;
+    var regExp = /^(\-|)[0-9]{1,}(\.[0-9]{1,}|)$/;
     var numberArray = [];
     var count = 1;
+    var largestNumber = null;
 
     //Searching the numbers in array of items
 
@@ -16,8 +17,17 @@ var searchNumber = function searchNumber(items) {
         for (var _iterator = items[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
             var i = _step.value;
 
-            var number = i.name.match(regExp);
-            numberArray.push(number[0]);
+            var number = i.name.split(" ");
+            console.log(number);
+            if (number) {
+                for (var k = 0; k < number.length; k++) {
+                    var foundNumber = number[k].match(regExp);
+                    if (foundNumber) {
+                        console.log("Number: " + foundNumber[0]);
+                        numberArray.push(foundNumber[0]);
+                    }
+                }
+            }
         }
     } catch (err) {
         _didIteratorError = true;
@@ -35,24 +45,63 @@ var searchNumber = function searchNumber(items) {
     }
 
     console.log(numberArray);
-    //Sorting the new array with numbers from the smallest number to the largest
-    while (count != 0) {
-        count = 0;
-        for (var k = 1; k < numberArray.length; k++) {
-            var actual = parseFloat(numberArray[k]);
-            var previous = parseFloat(numberArray[k - 1]);
-            if (previous > actual) {
-                numberArray[k - 1] = actual;
-                numberArray[k] = previous;
-                count++;
+
+    //Searching the largest number
+
+    if (numberArray.length > 0) {
+        largestNumber = numberArray[0];
+
+        var _iteratorNormalCompletion2 = true;
+        var _didIteratorError2 = false;
+        var _iteratorError2 = undefined;
+
+        try {
+            for (var _iterator2 = numberArray[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+                var num = _step2.value;
+
+                if (parseFloat(num) > parseFloat(largestNumber)) {
+                    largestNumber = num;
+                }
+            }
+        } catch (err) {
+            _didIteratorError2 = true;
+            _iteratorError2 = err;
+        } finally {
+            try {
+                if (!_iteratorNormalCompletion2 && _iterator2.return) {
+                    _iterator2.return();
+                }
+            } finally {
+                if (_didIteratorError2) {
+                    throw _iteratorError2;
+                }
             }
         }
-    }
-    var lengthOfNumberArray = numberArray.length;
 
-    console.log(numberArray[lengthOfNumberArray - 1]);
-    return parseFloat(numberArray[lengthOfNumberArray - 1]);
+        console.log("Largest number: " + largestNumber);
+        return parseFloat(largestNumber);
+    } else {
+        return 0;
+    }
 };
 'use strict';
 
-var items = [{ name: 'item 2' }, { name: 'item 33 per page' }, { name: 'item -6' }, { name: 'cos -23 i cos' }, { name: 'error 102' }, { name: 'simple item -323 ' }, { name: '-1 let' }];
+var items = [{ name: 'item -23' }, { name: 'item  6 ' }, { name: 'item32' }, { name: 'item 46 ' }, { name: 'error 14' }, { name: 'simple 23.234' }, { name: 'item 124.23' }, { name: 'item -534.32' }, { name: 'item 3e4' }];
+'use strict';
+
+function onLoad() {
+    console.log('dzialam');
+    var html = '<table class="table table-bordered"><thead><tr><td colspan="3">ITEMS</td></tr><tr><td>Id</td><td>Name</td></tr></thead><tbody>';
+    for (var i = 0; i < items.length; i++) {
+        html += '<tr><td>' + (i + 1) + '</td><td>' + items[i].name + '</td></tr>';
+    }
+    html += '</tbody></table>';
+
+    document.getElementsByClassName('tableDiv')[0].innerHTML = html;
+}
+
+function searchNumber() {
+    document.getElementsByClassName('resultView')[0].children[0].innerHTML = '<h1>The Largest: ' + getItemsMaxNumber(items) + '</h1>';
+}
+
+window.onload = onLoad();
